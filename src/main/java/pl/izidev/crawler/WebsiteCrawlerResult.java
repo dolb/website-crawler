@@ -1,13 +1,10 @@
 package pl.izidev.crawler;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
-import pl.izidev.parser.WebsiteParser;
 
 /**
  * Summary model created after page body is parsed.
- * FIXME
- * Figure out how the parsed data will be provided to the model.
  */
 public class WebsiteCrawlerResult {
 	private String url;
@@ -18,10 +15,10 @@ public class WebsiteCrawlerResult {
 
 
 	public WebsiteCrawlerResult() {
-		this.images = new TreeSet<>();
-		this.scripts = new TreeSet<>();
-		this.links = new TreeSet<>();
-		this.resources = new TreeSet<>();
+		this.images = new HashSet<>();
+		this.scripts = new HashSet<>();
+		this.links = new HashSet<>();
+		this.resources = new HashSet<>();
 	}
 
 	public WebsiteCrawlerResult setUrl(String url) {
@@ -29,20 +26,44 @@ public class WebsiteCrawlerResult {
 		return this;
 	}
 
-	public void addLink(String link) {
-		this.links.add(link);
+	public WebsiteCrawlerResult addLinks(Set<String> links) {
+		this.links.addAll(links);
+		return this;
 	}
 
-	public void addImage(String link) {
-		this.images.add(link);
+	public WebsiteCrawlerResult addImages(Set<String> links) {
+		this.images.addAll(links);
+		return this;
 	}
 
-	public void addScript(String link) {
-		this.scripts.add(link);
+	public WebsiteCrawlerResult addScripts(Set<String> links) {
+		this.scripts.addAll(links);
+		return this;
 	}
 
-	public void addResource(String link) {
-		this.resources.add(link);
+	public WebsiteCrawlerResult addResources(Set<String> links) {
+		this.resources.addAll(links);
+		return this;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public Set<String> getImages() {
+		return images;
+	}
+
+	public Set<String> getScripts() {
+		return scripts;
+	}
+
+	public Set<String> getResources() {
+		return resources;
+	}
+
+	public Set<String> getLinks() {
+		return links;
 	}
 
 	public String toString() {
@@ -53,12 +74,4 @@ public class WebsiteCrawlerResult {
 			+ "\n RESOURCES :: " + this.resources;
 	}
 
-	public Set<String> getLinks() {
-		return links;
-	}
-
-	public WebsiteCrawlerResult parseBody(String body) {
-		WebsiteParser.parse(body);
-		return this;
-	}
 }
