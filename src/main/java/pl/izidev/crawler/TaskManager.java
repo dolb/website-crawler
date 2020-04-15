@@ -16,7 +16,7 @@ public class TaskManager {
 		this.whitelistedHost = whitelistedHost;
 	}
 
-	public void addUrl(@NonNull String url) {
+	public TaskManager addUrl(@NonNull String url) {
 		Optional.ofNullable(url).ifPresent(
 			element -> {
 				if (HttpUtils.isMatchingHost(this.whitelistedHost, element) && !element.contains("#")) {
@@ -24,6 +24,7 @@ public class TaskManager {
 				}
 			}
 		);
+		return this;
 	}
 
 	public Optional<String> getNextUrl() {
