@@ -3,6 +3,7 @@ package pl.izidev.crawler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import pl.izidev.threading.ThreadListener;
 import pl.izidev.utils.HttpUtils;
 
 /**
@@ -14,13 +15,15 @@ public class WebsiteCrawler implements Runnable {
 	private ContentProvider provider;
 	private List<WebsiteCrawlerResult> crawledWebsites;
 	private Stack<String> callStack;
+	private final ThreadListener listener;
 
-	public WebsiteCrawler(final String startingUrl) throws UnsupportedOperationException {
+	public WebsiteCrawler(final String startingUrl, ThreadListener listener) throws UnsupportedOperationException {
 		this.taskManager = new TaskManager(
 			HttpUtils.getHost(startingUrl).orElseThrow(
 				() -> new UnsupportedOperationException(String.format("'%s' is not a valid starting URL", startingUrl))
 			)
 		).addUrl(startingUrl);
+		this.listener = listener;
 		this.callStack = new Stack<>();
 		this.crawledWebsites = new ArrayList<>();
 	}
@@ -49,15 +52,18 @@ public class WebsiteCrawler implements Runnable {
 
 	private void printResult() {
 		for(WebsiteCrawlerResult summary : this.crawledWebsites) {
-			System.out.println(summary);
+			System.out.println(summary.toHtml());
 		}
 	}
 
 	private void checkIfThreadFinished() {
 		if(this.callStack.isEmpty()) {
-			System.out.println("RUNNABLE DONE RUNNING :: RESULT:");
+			//TODO convert output list to HTML document
+			System.out.println("Crawling finished - printing result");
 			this.printResult();
-			// TODO notify listener in Main class that thread is done running to clean up
+			synchronized (this.listener) {
+				this.listener.notify();
+			}
 		}
 	}
 
@@ -66,14 +72,13 @@ public class WebsiteCrawler implements Runnable {
 		this.callStack.pop();
 		summary
 			.getLinks()
-			.stream()
 			.forEach(taskManager::addUrl);
 		processNextTask();
 		checkIfThreadFinished();
 	}
 
 	protected void processError(Throwable error) {
-		System.err.println(error);
+		System.err.println(error.toString());
 		this.callStack.pop();
 		checkIfThreadFinished();
 	}
