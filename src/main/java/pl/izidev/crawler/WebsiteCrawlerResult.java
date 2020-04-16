@@ -76,7 +76,8 @@ public class WebsiteCrawlerResult {
 	}
 
 	public String toHtml() {
-		return HTMLHelper.toDiv(
+		return HTMLHelper.toDivWithId(
+			this.url,
 			HTMLHelper.toTitle(this.url),
 			HTMLHelper.createLinkSection("Links", this.links),
 			HTMLHelper.createLinkSection("Images", this.images),

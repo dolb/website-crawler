@@ -1,9 +1,10 @@
 package pl.izidev.crawler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.swing.text.html.HTML;
 import pl.izidev.threading.ThreadListener;
+import pl.izidev.utils.HTMLHelper;
 import pl.izidev.utils.HttpUtils;
 
 /**
@@ -51,14 +52,32 @@ public class WebsiteCrawler implements Runnable {
 	}
 
 	private void printResult() {
-		for(WebsiteCrawlerResult summary : this.crawledWebsites) {
-			System.out.println(summary.toHtml());
-		}
+		String routesHTML = this.crawledWebsites
+			.stream()
+			.map(el -> HTMLHelper
+				.toListElement(
+					HTMLHelper.toLocalElementReference(el.getUrl())))
+			.collect(Collectors.joining(""));
+
+		String contentHTML = this.crawledWebsites
+			.stream()
+			.map(WebsiteCrawlerResult::getUrl)
+			.collect(Collectors.joining(""));
+
+		Map<String, String> params = new HashMap<>();
+		params.put("routes", routesHTML);
+		params.put("content", contentHTML);
+
+		String resultPage = HTMLHelper.populateTemplateResource(
+			"template.html",
+			params
+		);
+
+		System.out.println(resultPage);
 	}
 
 	private void checkIfThreadFinished() {
 		if(this.callStack.isEmpty()) {
-			//TODO convert output list to HTML document
 			System.out.println("Crawling finished - printing result");
 			this.printResult();
 			synchronized (this.listener) {
@@ -72,6 +91,7 @@ public class WebsiteCrawler implements Runnable {
 		this.callStack.pop();
 		summary
 			.getLinks()
+			//FIXME prevent recursive urls (visited HashSet cache would do)
 			.forEach(taskManager::addUrl);
 		processNextTask();
 		checkIfThreadFinished();
