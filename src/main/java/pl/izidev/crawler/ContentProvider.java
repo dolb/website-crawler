@@ -10,13 +10,13 @@ import pl.izidev.parser.WebsiteParser;
 /**
  * The class allows to fetch data for given URLs, and supports single subscriber channel that emits parsed resources.
  */
-public class ContentProvider {
+class ContentProvider {
 
 	private boolean subscribed = false;
-	protected Subject<WebsiteCrawlerResult> channel;
+	private Subject<WebsiteCrawlerResult> channel;
 	private ClientWrapper client;
 
-	public ContentProvider() {
+	ContentProvider() {
 		this.channel = PublishSubject.create();
 		this.client = new ClientWrapper();
 	}
@@ -25,7 +25,7 @@ public class ContentProvider {
 		this.channel.onNext(page);
 	}
 
-	public final ContentProvider subscribe(Consumer<WebsiteCrawlerResult> onNext, Consumer<? super Throwable> onError) throws UnsupportedOperationException {
+	final ContentProvider subscribe(Consumer<WebsiteCrawlerResult> onNext, Consumer<? super Throwable> onError) throws UnsupportedOperationException {
 		if(this.subscribed) {
 			throw new UnsupportedOperationException("Someone is already subscribed");
 		}
@@ -36,11 +36,11 @@ public class ContentProvider {
 	}
 
 	/**
-	 * Crawls URL, and emits result to content channel for TaskManager to process
-	 * @param url
-	 * @throws UnsupportedOperationException
+	 * Crawls URL, and emits result to content channel for an orchestrator to process
+	 * @param url - url that will be pulled
+	 * @throws UnsupportedOperationException if there is no subscriber on the channel
 	 */
-	public void crawl(String url) throws UnsupportedOperationException {
+	void crawl(String url) throws UnsupportedOperationException {
 		if (!this.subscribed) {
 			throw new UnsupportedOperationException("Cannot start crawler - connect listeners first");
 		}

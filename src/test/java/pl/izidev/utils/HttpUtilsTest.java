@@ -37,8 +37,6 @@ public class HttpUtilsTest {
 		assertTrue(HttpUtils.isMatchingHost("example.com", "http://example.com/test#local-reference"));
 		assertTrue(HttpUtils.isMatchingHost("example.com", "https://example.com/test#local-reference"));
 		assertTrue(HttpUtils.isMatchingHost("example.com", "//example.com/test#local-reference"));
-		assertTrue(HttpUtils.isMatchingHost("example.com", "test#local-reference"));
-		assertTrue(HttpUtils.isMatchingHost("example.com", "/test#local-reference"));
 	}
 
 	@Test
@@ -48,6 +46,8 @@ public class HttpUtilsTest {
 		assertFalse(HttpUtils.isMatchingHost("example.com", "//google.com/example.com/wont-match"));
 		//This might be considered a valid relative path, but the parser will not treat it as such
 		assertFalse(HttpUtils.isMatchingHost("example.com", "///google.com/example.com/this-will-match.jpg"));
+		assertFalse(HttpUtils.isMatchingHost("example.com", "test#local-reference"));
+		assertFalse(HttpUtils.isMatchingHost("example.com", "/test#local-reference"));
 	}
 
 

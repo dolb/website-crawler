@@ -20,13 +20,14 @@ public class ClientWrapper {
 		this.client = HttpClient.newBuilder()
 			.connectTimeout(Duration.ofSeconds(30))
 			.executor(Executors.newFixedThreadPool(4))
-			.followRedirects(HttpClient.Redirect.NEVER)
+			.followRedirects(HttpClient.Redirect.ALWAYS)
 			.version(HttpClient.Version.HTTP_2)
 			.sslParameters(new SSLParameters())
 			.build();
 	}
 
 	public CompletableFuture<String> getContent(String url) {
+		System.out.println(String.format("getContent :: %s", url));
 		var request = HttpRequest.newBuilder()
 			.GET()
 			.uri(URI.create(url))

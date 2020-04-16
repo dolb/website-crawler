@@ -1,7 +1,5 @@
 package pl.izidev.utils;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,16 +10,13 @@ public class HTMLHelper {
 	private final static String EMPTY_STRING = "";
 
 	public static String populateTemplateResource(String templateName, Map<String, String> params) {
-		try {
-			String templateFileContent = Files.readString(Path.of(HTMLHelper.class.getResource(String.join("", "/", templateName)).toURI()));
-			return populateTemplate(templateFileContent, params);
-		} catch (Exception e) {
-			System.err.println("Resource not found " + e.getMessage());
-			return EMPTY_STRING;
-		}
+		return ResourceHelper
+			.loadResourceAsString(templateName)
+			.map(templateFileContent -> populateTemplate(templateFileContent, params))
+			.orElse(EMPTY_STRING);
 	}
 
-	protected static String populateTemplate(String template, Map<String, String> params) {
+	static String populateTemplate(String template, Map<String, String> params) {
 		return params
 			.entrySet()
 			.stream()
@@ -43,11 +38,11 @@ public class HTMLHelper {
 		return String.format("<h1>%s</h1>", title);
 	}
 
-	public static String toSubtitle(String title) {
+	private static String toSubtitle(String title) {
 		return String.format("<h3>%s</h3>", title);
 	}
 
-	protected static String toList(Set<String> set) {
+	private static String toList(Set<String> set) {
 		if (set.isEmpty()) {
 			return EMPTY_STRING;
 		}
@@ -57,7 +52,7 @@ public class HTMLHelper {
 		);
 	}
 
-	public static String toListWithIdentifiers(List<String> entries) {
+	static String toListWithIdentifiers(List<String> entries) {
 		return entries
 			.stream()
 			.map(entry -> HTMLHelper.toListElementWithId(entry, entry))

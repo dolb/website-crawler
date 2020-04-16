@@ -2,7 +2,6 @@ package pl.izidev.crawler;
 
 import java.util.HashSet;
 import java.util.Set;
-import pl.izidev.utils.HTMLHelper;
 
 /**
  * Summary model created after page body is parsed.
@@ -73,17 +72,6 @@ public class WebsiteCrawlerResult {
 			+ "\n IMAGES :: " + this.images
 			+ "\n SCRIPTS :: " + this.scripts
 			+ "\n RESOURCES :: " + this.resources;
-	}
-
-	public String toHtml() {
-		return HTMLHelper.toDivWithId(
-			this.url,
-			HTMLHelper.toTitle(this.url),
-			HTMLHelper.createLinkSection("Links", this.links),
-			HTMLHelper.createLinkSection("Images", this.images),
-			HTMLHelper.createLinkSection("Scripts", this.scripts),
-			HTMLHelper.createLinkSection("Resources", this.resources)
-		);
 	}
 
 }

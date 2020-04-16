@@ -1,5 +1,6 @@
 package pl.izidev.parser;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jsoup.Jsoup;
@@ -18,16 +19,19 @@ public class WebsiteParser {
 		Document doc = Jsoup.parse(body);
 		result.addImages(findElements(doc, "img[src]", "src"));
 		result.addLinks(findElements(doc, "a[href]", "href"));
-		result.addScripts(findElements(doc, "script[type$=text/javascript]", "src"));
+		result.addScripts(findElements(doc, "script[src]", "src"));
 		result.addResources(findElements(doc, "link[rel$=stylesheet]", "href"));
 		return result;
 	}
 
-	protected static Set<String> findElements(Document doc, String selector, String attributeName) {
+	static Set<String> findElements(Document doc, String selector, String attributeName) {
 		return doc.select(selector)
 			.stream()
 			.map(
 				imageElement -> imageElement.attr(attributeName)
+			)
+			.filter(
+				el -> Optional.ofNullable(el).isPresent()
 			).collect(Collectors.toSet());
 	}
 

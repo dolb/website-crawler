@@ -1,29 +1,36 @@
 package pl.izidev.crawler;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.swing.text.html.HTML;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 import pl.izidev.threading.ThreadListener;
-import pl.izidev.utils.HTMLHelper;
 import pl.izidev.utils.HttpUtils;
+import pl.izidev.crawler.output.CrawlerOutput;
 
 /**
  * Main instance to orchestrate whole crawling process outside of main method.
  */
 public class WebsiteCrawler implements Runnable {
 
+
 	private TaskManager taskManager;
 	private ContentProvider provider;
 	private List<WebsiteCrawlerResult> crawledWebsites;
 	private Stack<String> callStack;
 	private final ThreadListener listener;
+	private final CrawlerOutput outputConverter;
 
-	public WebsiteCrawler(final String startingUrl, ThreadListener listener) throws UnsupportedOperationException {
+	public WebsiteCrawler(
+		final String startingUrl,
+		ThreadListener listener,
+		CrawlerOutput outputConverter
+	) throws UnsupportedOperationException {
 		this.taskManager = new TaskManager(
 			HttpUtils.getHost(startingUrl).orElseThrow(
 				() -> new UnsupportedOperationException(String.format("'%s' is not a valid starting URL", startingUrl))
 			)
 		).addUrl(startingUrl);
+		this.outputConverter = outputConverter;
 		this.listener = listener;
 		this.callStack = new Stack<>();
 		this.crawledWebsites = new ArrayList<>();
@@ -52,28 +59,10 @@ public class WebsiteCrawler implements Runnable {
 	}
 
 	private void printResult() {
-		String routesHTML = this.crawledWebsites
-			.stream()
-			.map(el -> HTMLHelper
-				.toListElement(
-					HTMLHelper.toLocalElementReference(el.getUrl())))
-			.collect(Collectors.joining(""));
-
-		String contentHTML = this.crawledWebsites
-			.stream()
-			.map(WebsiteCrawlerResult::getUrl)
-			.collect(Collectors.joining(""));
-
-		Map<String, String> params = new HashMap<>();
-		params.put("routes", routesHTML);
-		params.put("content", contentHTML);
-
-		String resultPage = HTMLHelper.populateTemplateResource(
-			"template.html",
-			params
-		);
-
-		System.out.println(resultPage);
+		this.outputConverter
+			.convertResults(this.crawledWebsites)
+			.print()
+			.saveFile();
 	}
 
 	private void checkIfThreadFinished() {
@@ -86,18 +75,17 @@ public class WebsiteCrawler implements Runnable {
 		}
 	}
 
-	protected void processWebsiteSummary(WebsiteCrawlerResult summary) {
+	private void processWebsiteSummary(WebsiteCrawlerResult summary) {
 		this.crawledWebsites.add(summary);
 		this.callStack.pop();
 		summary
 			.getLinks()
-			//FIXME prevent recursive urls (visited HashSet cache would do)
 			.forEach(taskManager::addUrl);
 		processNextTask();
 		checkIfThreadFinished();
 	}
 
-	protected void processError(Throwable error) {
+	private void processError(Throwable error) {
 		System.err.println(error.toString());
 		this.callStack.pop();
 		checkIfThreadFinished();

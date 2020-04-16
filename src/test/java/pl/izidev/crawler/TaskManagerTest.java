@@ -14,6 +14,16 @@ public class TaskManagerTest {
 	}
 
 	@Test
+	public void addUrl_duplicateUrl() {
+		TaskManager taskManager = new TaskManager("example.com");
+		taskManager.addUrl("http://example.com");
+		taskManager.addUrl("http://example.com");
+		assertEquals("http://example.com", taskManager.getNextUrl().orElse(null));
+		assertFalse(taskManager.getNextUrl().isPresent());
+	}
+
+
+	@Test
 	public void addUrl_invalidDifferentHost() {
 		TaskManager taskManager = new TaskManager("example.com");
 		taskManager.addUrl("http://google.com/example.com");

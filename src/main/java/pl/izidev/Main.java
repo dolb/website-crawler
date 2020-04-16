@@ -1,6 +1,8 @@
 package pl.izidev;
 
 import pl.izidev.crawler.WebsiteCrawler;
+import pl.izidev.crawler.output.CrawlerOutput;
+import pl.izidev.crawler.output.HTMLFileOutput;
 import pl.izidev.threading.ThreadListener;
 
 public class Main {
@@ -13,10 +15,11 @@ public class Main {
 			System.exit(1);
 		}
 		String startingURL = args[0];
+		CrawlerOutput output = new HTMLFileOutput();
 
 		try {
 			ThreadListener listener = new ThreadListener();
-			WebsiteCrawler crawler = new WebsiteCrawler(startingURL, listener);
+			WebsiteCrawler crawler = new WebsiteCrawler(startingURL, listener, output);
 			Thread crawlerThread = new Thread(crawler);
 
 			synchronized (listener) {
