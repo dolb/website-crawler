@@ -4,4 +4,5 @@ task:
     image: maven:latest
   maven_cache:
     folder: ~/.m2
-  test_script: mvn test -B
+  build_task:
+    build_script: mvn clean compile test
