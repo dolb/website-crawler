@@ -31,7 +31,7 @@ class TaskManager {
 	 * @param url url that should be put into task queue
 	 * @return own instance for chain- call code style
 	 */
-	TaskManager addUrl(String url) {
+	synchronized TaskManager addUrl(String url) {
 		Optional
 			.ofNullable(url)
 			.map(HttpUtils::removeTrailingSlash)
@@ -40,8 +40,8 @@ class TaskManager {
 					if (HttpUtils.isMatchingHost(this.whitelistedHost, element)
 						&& !element.contains("#")
 						&& !processedTasks.contains(element)) {
-							this.tasks.add(element);
 							this.processedTasks.add(element);
+							this.tasks.add(element);
 					}
 				}
 		);
@@ -53,7 +53,12 @@ class TaskManager {
 	/**
 	 * Polling next task from the task queue, packed with Optional.
 	 */
-	Optional<String> getNextUrl() {
+	synchronized Optional<String> getNextUrl() {
 		return Optional.ofNullable(this.tasks.poll());
+	}
+
+	@Override
+	public String toString() {
+		return this.tasks.toString();
 	}
 }
