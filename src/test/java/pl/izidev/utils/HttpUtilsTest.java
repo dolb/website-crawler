@@ -6,33 +6,6 @@ import org.junit.Test;
 public class HttpUtilsTest {
 
 	@Test
-	public void isAbsolutePath_http() {
-		assertTrue(HttpUtils.isAbsolutePath("http://example.com/test#local-reference"));
-		assertTrue(HttpUtils.isAbsolutePath("http://example.com/test"));
-		assertTrue(HttpUtils.isAbsolutePath("http://example.com"));
-	}
-
-	@Test
-	public void isAbsolutePath_https() {
-		assertTrue(HttpUtils.isAbsolutePath("https://example.com/test#local-reference"));
-		assertTrue(HttpUtils.isAbsolutePath("https://example.com/test"));
-		assertTrue(HttpUtils.isAbsolutePath("https://example.com"));
-	}
-
-	@Test
-	public void isAbsolutePath_contextSpecific() {
-		assertTrue(HttpUtils.isAbsolutePath("//example.com/test#local-reference"));
-		assertTrue(HttpUtils.isAbsolutePath("//example.com/test"));
-		assertTrue(HttpUtils.isAbsolutePath("//example.com"));
-	}
-
-	@Test
-	public void isAbsolutePath_falseCases() {
-		assertFalse(HttpUtils.isAbsolutePath("assets/image.png"));
-		assertFalse(HttpUtils.isAbsolutePath("/assets/image.png"));
-	}
-
-	@Test
 	public void isMatchingHost_true() {
 		assertTrue(HttpUtils.isMatchingHost("example.com", "http://example.com/test#local-reference"));
 		assertTrue(HttpUtils.isMatchingHost("example.com", "https://example.com/test#local-reference"));
@@ -50,5 +23,79 @@ public class HttpUtilsTest {
 		assertFalse(HttpUtils.isMatchingHost("example.com", "/test#local-reference"));
 	}
 
+	@Test
+	public void getHost_http() {
+		assertTrue(
+			HttpUtils
+				.getHost("http://example.com/some-path")
+				.filter("example.com"::equals)
+				.isPresent()
+		);
+	}
 
+	@Test
+	public void getHost_https() {
+		assertTrue(
+			HttpUtils
+				.getHost("https://example.com/some-path")
+				.filter("example.com"::equals)
+				.isPresent()
+		);
+	}
+
+	@Test
+	public void getHost_failed() {
+		assertFalse(
+			HttpUtils
+				.getHost("//example.com/some-path")
+				.isPresent()
+		);
+		assertFalse(
+			HttpUtils
+				.getHost("/some-path")
+				.isPresent()
+		);
+		assertFalse(
+			HttpUtils
+				.getHost("some-path")
+				.isPresent()
+		);
+	}
+
+
+	@Test
+	public void isUrlContextRelative_true() {
+		assertTrue(
+			HttpUtils
+				.isUrlContextRelative("//example.com/some-path")
+		);
+		assertTrue(
+			HttpUtils
+				.isUrlContextRelative("/some-path")
+		);
+		assertTrue(
+			HttpUtils
+				.isUrlContextRelative("some-path")
+		);
+		assertTrue(
+			HttpUtils
+				.isUrlContextRelative("#anchor")
+		);
+		assertTrue(
+			HttpUtils
+				.isUrlContextRelative("/#anchor")
+		);
+	}
+
+	@Test
+	public void isUrlContextRelative_false() {
+		assertFalse(
+			HttpUtils
+				.isUrlContextRelative("http://example.com/some-path")
+		);
+		assertFalse(
+			HttpUtils
+				.isUrlContextRelative("https://example.com/some-path")
+		);
+	}
 }

@@ -18,7 +18,7 @@ public class ClientWrapper {
 
 	public ClientWrapper() {
 		this.client = HttpClient.newBuilder()
-			.connectTimeout(Duration.ofSeconds(30))
+			.connectTimeout(Duration.ofSeconds(5))
 			.executor(Executors.newFixedThreadPool(4))
 			.followRedirects(HttpClient.Redirect.ALWAYS)
 			.version(HttpClient.Version.HTTP_2)

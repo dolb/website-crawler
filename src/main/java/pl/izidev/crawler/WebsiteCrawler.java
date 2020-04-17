@@ -2,6 +2,7 @@ package pl.izidev.crawler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Stack;
 import pl.izidev.threading.ThreadListener;
 import pl.izidev.utils.HttpUtils;
@@ -89,8 +90,18 @@ public class WebsiteCrawler implements Runnable {
 
 	private void processSinglePage(WebsiteCrawlerResult summary) {
 		this.crawledWebsites.add(summary);
+		final String parentUrl = summary.getUrl();
 		summary
 			.getLinks()
+			.stream()
+			.map(Optional::ofNullable)
+			.filter(Optional::isPresent)
+			.map(
+				optionalUrl ->
+					optionalUrl
+						.filter(HttpUtils::isUrlContextRelative)
+						.map(u -> HttpUtils.extendContentRelativeLink(u, parentUrl))
+						.orElse(optionalUrl.get()))
 			.forEach(taskManager::addUrl);
 		taskProcessedCallback();
 	}
