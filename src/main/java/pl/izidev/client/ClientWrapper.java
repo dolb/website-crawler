@@ -34,12 +34,7 @@ public class ClientWrapper {
 			.timeout(Duration.ofSeconds(15))
 			.build();
 
-		//FIXME statusCode extension required
 		return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-			.thenApply(response -> {
-				System.out.println(response.statusCode());
-				return response;
-			})
 			.thenApply(HttpResponse::body);
 	}
 

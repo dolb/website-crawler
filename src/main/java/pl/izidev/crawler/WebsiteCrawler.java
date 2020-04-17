@@ -2,7 +2,7 @@ package pl.izidev.crawler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
 import pl.izidev.threading.ThreadListener;
 import pl.izidev.utils.HttpUtils;
 import pl.izidev.crawler.output.CrawlerOutput;
@@ -15,7 +15,7 @@ public class WebsiteCrawler implements Runnable {
 	private TaskManager taskManager;
 	private ContentProvider provider;
 	private List<WebsiteCrawlerResult> crawledWebsites;
-	private Stack<String> callStack;
+	private AtomicInteger callStack;
 	private final ThreadListener listener;
 	private final CrawlerOutput outputConverter;
 
@@ -31,7 +31,7 @@ public class WebsiteCrawler implements Runnable {
 		).addUrl(startingUrl);
 		this.outputConverter = outputConverter;
 		this.listener = listener;
-		this.callStack = new Stack<>();
+		this.callStack = new AtomicInteger();
 		this.crawledWebsites = new ArrayList<>();
 	}
 
@@ -44,8 +44,9 @@ public class WebsiteCrawler implements Runnable {
 			.getNextUrl()
 			.ifPresent(
 				url -> {
-					this.callStack.add(url);
+					this.callStack.addAndGet(1);
 					this.provider.crawl(url);
+					processNextTask();
 				}
 			);
 	}
@@ -72,7 +73,7 @@ public class WebsiteCrawler implements Runnable {
 	}
 
 	private void checkIfThreadFinished() {
-		if(this.callStack.isEmpty()) {
+		if(this.callStack.addAndGet(-1) == 0) {
 			System.out.println("Crawling finished - printing result");
 			generateOutput();
 			synchronized (this.listener) {
@@ -82,7 +83,6 @@ public class WebsiteCrawler implements Runnable {
 	}
 
 	private void taskProcessedCallback() {
-		this.callStack.pop();
 		processNextTask();
 		checkIfThreadFinished();
 	}
