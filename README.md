@@ -66,11 +66,13 @@ There are some issues known to me I will fix in the future commits:
 1) Currently crawler omits context relative URLs in the crawling process (ie. some-page, /some-page, //example.com/some-page). They will be added to any link sections, but they will not be visited and parsed.
 2) Mapped URLs has a Set based structure, so in case of finding similar URLs with an anchor reference (ie. /#anchor, #anchor) they will both be added.
 3) Crawler has a build in logic to omit URLs with an anchor (ie. http://example.com/somepage#anchor). It is a hypothetical case, but if there is a single link on crawled website containing anchor without any other occurrence without an anchor it will not be visited by the crawler.
-4) Crawler might be susceptible for sneaky Website creators :) For example if one would place a hidden link not visible to website users, that would look like an ordinary HTML reference, but would not be an HTML document - parsing error would occur - it would not stop the crawler process, but such URL would be skipped in visited URLs.  
+4) Crawler might be susceptible for sneaky Website creators :) For example if one might place a hidden link not visible to website users, that would look like an ordinary HTML reference. If it would not be an HTML document, parsing error would occur. It would not stop the crawler process, but such URL would be skipped in visited URLs section.
 
-## Possible enhancements
+## Possible extensions
 
 As mentioned in the 'Trade offs' section there are several enhancements that ay be added:
 
 1) Parsing both DOM for style attribute and CSS files for background related patterns. Such urls might be added to **images** Set.
-2) Implementing speed parameter. In case of too many concurrent requests in short period of time many websites would drop crawler requests. Parallel crawling is also a valid solution to speed up the crawling process.
+2) Parallel crawling is also a valid solution to speed up the crawling process. Currently the crawler is visiting another URL after it is done with the previous as the WebsiteCrawler is not thread safe. Adding thread safe version with synchronized state fields would allow the crawler to call 'crawl' method more often speeding up the process.
+3) Implementing speed parameter would be a valuable option especially if we would like to add parallel implementation. In case of too many concurrent requests in short period of time many websites would drop crawler requests.
+4) Adding separate sections for response codes other than 200 would be a valuable extension. Currently if a website has a broken link (that returns 404, 502 or other client or server side errors) it will not place it on the website map. Separate section would be useful to find broken links on the website as a tool for website administrators.

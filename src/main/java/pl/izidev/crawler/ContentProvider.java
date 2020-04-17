@@ -45,7 +45,6 @@ class ContentProvider {
 			throw new UnsupportedOperationException("Cannot start crawler - connect listeners first");
 		}
 
-		//FIXME process onError and extend WebsiteCrawlerResult functionality (404, 502 and other HTTP codes)
 		client.getContent(url)
 			.thenApply(WebsiteParser::parse)
 			.thenApply(result -> result.setUrl(url))

@@ -12,7 +12,6 @@ import pl.izidev.crawler.output.CrawlerOutput;
  */
 public class WebsiteCrawler implements Runnable {
 
-
 	private TaskManager taskManager;
 	private ContentProvider provider;
 	private List<WebsiteCrawlerResult> crawledWebsites;
