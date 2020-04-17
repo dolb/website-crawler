@@ -52,6 +52,7 @@ My crawler has multiple trade offs that you need to know about:
     * **script** for scripts
     * **link** for resources
     * **a** for mapped links that
+    
    Saying that there are few examples, that my crawler will miss:
     * If the page has images based on CSS background inherited either from class or style attribute.
     * Async scripts loaded by JavaScript.
