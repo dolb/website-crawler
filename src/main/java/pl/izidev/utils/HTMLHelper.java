@@ -5,6 +5,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Simple HTML helper used for generating HTML parts for HTMLCrawlerOutput class.
+ * It supports simple templating and seemed faster to implement than using Jsoup library to create DOM.
+ */
 public class HTMLHelper {
 
 	private final static String EMPTY_STRING = "";

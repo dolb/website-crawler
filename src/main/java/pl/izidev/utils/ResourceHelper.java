@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * Helper methods for resources and files.
+ */
 public class ResourceHelper {
 
 	static Optional<String> loadResourceAsString(String resourceName) {

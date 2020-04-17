@@ -4,15 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.jsoup.Jsoup;
 import pl.izidev.crawler.WebsiteCrawlerResult;
 import pl.izidev.utils.HTMLHelper;
 
-public class HTMLFileOutput extends CrawlerOutput {
+public class HTMLCrawlerOutput extends CrawlerOutput {
 
 	private final static String OUTPUT_FILE_NAME = "crawler-output.html";
 
 	@Override
-	public String convert(List<WebsiteCrawlerResult> crawledWebsites) {
+	protected String convert(List<WebsiteCrawlerResult> crawledWebsites) {
 		String routesHTML = crawledWebsites
 			.stream()
 			.map(el -> HTMLHelper
@@ -29,10 +30,12 @@ public class HTMLFileOutput extends CrawlerOutput {
 		params.put("routes", routesHTML);
 		params.put("content", contentHTML);
 
-		return HTMLHelper.populateTemplateResource(
+		String filledTemplate = HTMLHelper.populateTemplateResource(
 			"template.html",
 			params
 		);
+
+		return Jsoup.parse(filledTemplate).toString();
 	}
 
 	@Override

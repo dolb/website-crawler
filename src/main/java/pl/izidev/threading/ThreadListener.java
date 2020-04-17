@@ -1,6 +1,6 @@
 package pl.izidev.threading;
 
-public class ThreadListener {
-
-
-}
+/**
+ * Simple POJO used for thread synchronization - looks better than simple java.lang.Object.
+ */
+public class ThreadListener {}

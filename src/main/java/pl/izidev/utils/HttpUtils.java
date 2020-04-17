@@ -4,6 +4,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
+/**
+ * Miscellaneous helper methods for parsing URLs.
+ */
 public class HttpUtils {
 
 	private static final String HTTP_PREFIX = "http://";

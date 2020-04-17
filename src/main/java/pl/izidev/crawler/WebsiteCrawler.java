@@ -36,6 +36,10 @@ public class WebsiteCrawler implements Runnable {
 		this.crawledWebsites = new ArrayList<>();
 	}
 
+	/**
+	 * Processes next URL saved in TaskManager.
+	 * If found it notifies ContentProvider it should start crawling process again.
+	 */
 	private void processNextTask() {
 		this.taskManager
 			.getNextUrl()
@@ -52,13 +56,16 @@ public class WebsiteCrawler implements Runnable {
 		System.out.println("Website crawler main thread started");
 		this.provider = new ContentProvider()
 			.subscribe(
-				this::processWebsiteSummary,
+				this::processSinglePage,
 				this::processError
 			);
 		processNextTask();
 	}
 
-	private void printResult() {
+	/**
+	 * Generates output using injected CrawlerOutput.
+	 */
+	private void generateOutput() {
 		this.outputConverter
 			.convertResults(this.crawledWebsites)
 			.print()
@@ -68,27 +75,30 @@ public class WebsiteCrawler implements Runnable {
 	private void checkIfThreadFinished() {
 		if(this.callStack.isEmpty()) {
 			System.out.println("Crawling finished - printing result");
-			this.printResult();
+			generateOutput();
 			synchronized (this.listener) {
 				this.listener.notify();
 			}
 		}
 	}
 
-	private void processWebsiteSummary(WebsiteCrawlerResult summary) {
-		this.crawledWebsites.add(summary);
+	private void taskProcessedCallback() {
 		this.callStack.pop();
-		summary
-			.getLinks()
-			.forEach(taskManager::addUrl);
 		processNextTask();
 		checkIfThreadFinished();
 	}
 
+	private void processSinglePage(WebsiteCrawlerResult summary) {
+		this.crawledWebsites.add(summary);
+		summary
+			.getLinks()
+			.forEach(taskManager::addUrl);
+		taskProcessedCallback();
+	}
+
 	private void processError(Throwable error) {
 		System.err.println(error.toString());
-		this.callStack.pop();
-		checkIfThreadFinished();
+		taskProcessedCallback();
 	}
 
 }

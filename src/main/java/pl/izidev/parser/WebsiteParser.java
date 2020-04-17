@@ -24,6 +24,13 @@ public class WebsiteParser {
 		return result;
 	}
 
+	/**
+	 * Finds DOM elements by a given selector (Jsoup notation) and returns given attribute.
+	 * @param doc DOM Document
+	 * @param selector Jsoup selector
+	 * @param attributeName extracted attribute name
+	 * @return value for given attribute name
+	 */
 	static Set<String> findElements(Document doc, String selector, String attributeName) {
 		return doc.select(selector)
 			.stream()

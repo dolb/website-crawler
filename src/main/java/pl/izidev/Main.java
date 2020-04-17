@@ -1,8 +1,9 @@
 package pl.izidev;
 
+import java.util.Optional;
 import pl.izidev.crawler.WebsiteCrawler;
 import pl.izidev.crawler.output.CrawlerOutput;
-import pl.izidev.crawler.output.HTMLFileOutput;
+import pl.izidev.crawler.output.CrawlerOutputFactory;
 import pl.izidev.threading.ThreadListener;
 
 public class Main {
@@ -14,11 +15,14 @@ public class Main {
 			System.out.println("java -jar crawler.jar http://example.com");
 			System.exit(1);
 		}
+
 		String startingURL = args[0];
-		CrawlerOutput output = new HTMLFileOutput();
 
 		try {
 			ThreadListener listener = new ThreadListener();
+			CrawlerOutput output = CrawlerOutputFactory.getCrawlerOutput(
+				Optional.of(args).filter(arr -> arr.length >= 2).map(arr -> arr[1])
+			);
 			WebsiteCrawler crawler = new WebsiteCrawler(startingURL, listener, output);
 			Thread crawlerThread = new Thread(crawler);
 

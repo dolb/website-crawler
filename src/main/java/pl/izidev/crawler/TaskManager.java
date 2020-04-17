@@ -1,6 +1,5 @@
 package pl.izidev.crawler;
 
-import io.reactivex.annotations.NonNull;
 import java.util.*;
 import pl.izidev.utils.HttpUtils;
 
@@ -32,7 +31,7 @@ class TaskManager {
 	 * @param url url that should be put into task queue
 	 * @return own instance for chain- call code style
 	 */
-	TaskManager addUrl(@NonNull String url) {
+	TaskManager addUrl(String url) {
 		Optional
 			.ofNullable(url)
 			.map(HttpUtils::removeTrailingSlash)
