@@ -1,8 +1,9 @@
-task:
-  name: TestTask
-  container:
-    image: maven:latest
-  maven_cache:
-    folder: ~/.m2
-  build_task:
-    build_script: mvn clean compile test
+version: 2.1
+
+orbs:
+  maven: circleci/maven@0.0.12
+
+workflows:
+  maven_test:
+    jobs:
+      - maven/test # checkout, build, test, and upload test results
