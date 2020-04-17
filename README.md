@@ -73,6 +73,6 @@ There are some issues known to me I will fix in the future commits:
 As mentioned in the 'Trade offs' section there are several enhancements that ay be added:
 
 1) Parsing both DOM for style attribute and CSS files for background related patterns. Such urls might be added to **images** Set.
-2) Parallel crawling is also a valid solution to speed up the crawling process. Currently the crawler is visiting another URL after it is done with the previous as the WebsiteCrawler is not thread safe. Adding thread safe version with synchronized state fields would allow the crawler to call 'crawl' method more often speeding up the process.
+2) Parallel crawling is also a valid solution to speed up the crawling process. Currently the crawler is visiting another URL after it is done with the previous as the WebsiteCrawler nor TaskManager are thread safe. Adding thread safe version with synchronized state fields would allow the crawler to call 'crawl' method more often speeding up the process.
 3) Implementing speed parameter would be a valuable option especially if we would like to add parallel implementation. In case of too many concurrent requests in short period of time many websites would drop crawler requests.
 4) Adding separate sections for response codes other than 200 would be a valuable extension. Currently if a website has a broken link (that returns 404, 502 or other client or server side errors) it will not place it on the website map. Separate section would be useful to find broken links on the website as a tool for website administrators.
