@@ -2,6 +2,7 @@ package pl.izidev.utils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,18 @@ public class HTMLHelper {
 			toSubtitle(title),
 			toList(urls)
 		);
+	}
+
+	public static String optionalDivSection(String title, String text) {
+		return Optional
+			.ofNullable(text)
+			.map(
+				value -> String.format(
+					"<div>%s<div>%s</div></div>",
+					toSubtitle(title),
+					value
+				)
+			).orElse(EMPTY_STRING);
 	}
 
 	public static String toTitle(String title) {

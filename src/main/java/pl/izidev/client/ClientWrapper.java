@@ -26,12 +26,12 @@ public class ClientWrapper {
 			.build();
 	}
 
-	public CompletableFuture<String> getContent(String url) {
+	public CompletableFuture<String> getContent(String url, long timeoutSeconds) {
 		System.out.println(String.format("getContent :: %s", url));
 		var request = HttpRequest.newBuilder()
 			.GET()
 			.uri(URI.create(url))
-			.timeout(Duration.ofSeconds(15))
+			.timeout(Duration.ofSeconds(timeoutSeconds))
 			.build();
 
 		return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())

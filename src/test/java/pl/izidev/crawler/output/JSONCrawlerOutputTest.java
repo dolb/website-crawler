@@ -29,7 +29,8 @@ public class JSONCrawlerOutputTest {
 			"    \"images\" : [ \"http://example.com/image.jpg\" ],",
 			"    \"scripts\" : [ ],",
 			"    \"links\" : [ \"http://example.com/link\" ],",
-			"    \"resources\" : [ \"http://example.com/resource\" ]",
+			"    \"resources\" : [ \"http://example.com/resource\" ],",
+			"    \"exception\" : null",
 			"  } ]",
 			"}"
 		);
