@@ -12,6 +12,7 @@ public class WebsiteCrawlerResult {
 	private Set<String> scripts;
 	private Set<String> links;
 	private Set<String> resources;
+	private String exception;
 
 
 	public WebsiteCrawlerResult() {
@@ -66,12 +67,22 @@ public class WebsiteCrawlerResult {
 		return links;
 	}
 
+	public WebsiteCrawlerResult setException(String exception) {
+		this.exception = exception;
+		return this;
+	}
+
+	public String getException() {
+		return exception;
+	}
+
 	public String toString() {
 		return this.url
 			+ "\n LINKS :: " + this.links
 			+ "\n IMAGES :: " + this.images
 			+ "\n SCRIPTS :: " + this.scripts
-			+ "\n RESOURCES :: " + this.resources;
+			+ "\n RESOURCES :: " + this.resources
+			+ "\n EXCEPTION :: " + this.exception;
 	}
 
 }

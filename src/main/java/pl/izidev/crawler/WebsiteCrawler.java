@@ -15,7 +15,8 @@ public class WebsiteCrawler implements Runnable {
 	private TaskManager taskManager;
 	private ContentProvider provider;
 	private List<WebsiteCrawlerResult> crawledWebsites;
-	private AtomicInteger callStack;
+	private int tasksStarted;
+	private int tasksFinished;
 	private final ThreadListener listener;
 	private final CrawlerOutput outputConverter;
 
@@ -31,7 +32,8 @@ public class WebsiteCrawler implements Runnable {
 		).addUrl(startingUrl);
 		this.outputConverter = outputConverter;
 		this.listener = listener;
-		this.callStack = new AtomicInteger();
+		this.tasksStarted = 0;
+		this.tasksFinished = 0;
 		this.crawledWebsites = new ArrayList<>();
 	}
 
@@ -44,7 +46,7 @@ public class WebsiteCrawler implements Runnable {
 			.getNextUrl()
 			.ifPresent(
 				url -> {
-					this.callStack.addAndGet(1);
+					this.tasksStarted += 1;
 					this.provider.crawl(url);
 					processNextTask();
 				}
@@ -73,7 +75,9 @@ public class WebsiteCrawler implements Runnable {
 	}
 
 	private void checkIfThreadFinished() {
-		if(this.callStack.addAndGet(-1) == 0) {
+		this.tasksFinished += 1;
+		System.out.println(String.format("%d == %d", this.tasksStarted, this.tasksFinished));
+		if(this.tasksStarted == this.tasksFinished) {
 			System.out.println("Crawling finished - printing result");
 			generateOutput();
 			synchronized (this.listener) {
@@ -95,8 +99,13 @@ public class WebsiteCrawler implements Runnable {
 		taskProcessedCallback();
 	}
 
+	/**
+	 * No error is emitted to the observable, so this method wont ever be called unless
+	 * someone extends RX channel functionality
+	 */
 	private void processError(Throwable error) {
-		System.err.println(error.toString());
+		error.printStackTrace();
+		this.tasksFinished = this.tasksStarted;
 		taskProcessedCallback();
 	}
 

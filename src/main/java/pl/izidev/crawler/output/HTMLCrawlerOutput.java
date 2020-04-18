@@ -51,7 +51,8 @@ public class HTMLCrawlerOutput extends CrawlerOutput {
 			HTMLHelper.createLinkSection("Links", summary.getLinks()),
 			HTMLHelper.createLinkSection("Images", summary.getImages()),
 			HTMLHelper.createLinkSection("Scripts", summary.getScripts()),
-			HTMLHelper.createLinkSection("Resources", summary.getResources())
+			HTMLHelper.createLinkSection("Resources", summary.getResources()),
+			HTMLHelper.optionalDivSection("Exception", summary.getException())
 		);
 	}
 
