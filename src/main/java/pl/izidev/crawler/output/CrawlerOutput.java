@@ -1,5 +1,6 @@
 package pl.izidev.crawler.output;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import pl.izidev.crawler.WebsiteCrawlerResult;
@@ -17,8 +18,10 @@ public abstract class CrawlerOutput {
 
 	}
 
+
 	public CrawlerOutput convertResults(List<WebsiteCrawlerResult> crawlerResults) {
-		this.convertedBody = convert(crawlerResults);
+		//FIXME Workaround due to possible concurrent modification https://github.com/dolb/website-crawler/issues/3
+		this.convertedBody = convert(new ArrayList<>(crawlerResults));
 		return this;
 	}
 

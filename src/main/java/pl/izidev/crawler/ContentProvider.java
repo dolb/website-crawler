@@ -67,7 +67,7 @@ class ContentProvider {
 			.exceptionally(
 				exception -> new WebsiteCrawlerResult()
 					.setUrl(url)
-					.setException(exception.getClass().getSimpleName())
+					.setException(exception.getMessage())
 				)
 			.thenAccept(this::emitPage);
 	}
