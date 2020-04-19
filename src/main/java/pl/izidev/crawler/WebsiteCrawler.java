@@ -76,7 +76,6 @@ public class WebsiteCrawler implements Runnable {
 
 	private void checkIfThreadFinished() {
 		this.tasksFinished += 1;
-		System.out.println(String.format("%d == %d", this.tasksStarted, this.tasksFinished));
 		if(this.tasksStarted == this.tasksFinished) {
 			System.out.println("Crawling finished - printing result");
 			generateOutput();

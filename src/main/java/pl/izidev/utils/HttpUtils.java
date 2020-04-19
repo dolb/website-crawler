@@ -18,8 +18,9 @@ public class HttpUtils {
 	}
 
 	public static boolean isMatchingHost(String host, String url) {
-		String regex = ".*//" + host + "[/]?.*";
-		return (isAbsolutePath(url) && url.matches(regex));
+		return getHost(url)
+			.filter(host::equals)
+			.isPresent();
 	}
 
 	public static Optional<String> getHost(String url) {
